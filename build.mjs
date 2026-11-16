@@ -75,6 +75,20 @@ function markdown(src) {
 
     if (/^\s*(---|\*\*\*)\s*$/.test(line)) { out.push('<hr>'); i++; continue; }
 
+    // Блоки-врезки: ::: note | warning | vet … :::
+    const container = line.match(/^:::\s*(note|warning|vet)\s*(.*)$/);
+    if (container) {
+      const [, kind, heading] = container;
+      i++;
+      const buf = [];
+      while (i < lines.length && !/^:::\s*$/.test(lines[i])) buf.push(lines[i++]);
+      i++;
+      const titles = { vet: 'Когда обращаться к ветеринару', note: '', warning: '' };
+      const title = heading.trim() || titles[kind];
+      out.push(`<div class="${kind === 'vet' ? 'vet-block' : kind}">${title ? `<h3>${inline(title)}</h3>` : ''}${markdown(buf.join('\n'))}</div>`);
+      continue;
+    }
+
     // Таблица: строка заголовка, строка-разделитель, дальше тело.
     if (tableRow(line) && tableRow(lines[i + 1] || '') && /^[\s|:-]+$/.test(lines[i + 1])) {
       const head = cells(line);
@@ -116,7 +130,7 @@ function markdown(src) {
     }
 
     const para = [];
-    while (i < lines.length && lines[i].trim() && !/^\s*(#{1,6}\s|[-*]\s|\d+[.)]\s|>|<|---)/.test(lines[i])) {
+    while (i < lines.length && lines[i].trim() && !/^\s*(#{1,6}\s|[-*]\s|\d+[.)]\s|>|<|---|:::)/.test(lines[i])) {
       para.push(lines[i++]);
     }
     if (para.length) out.push(`<p>${inline(para.join(' ').trim())}</p>`);
@@ -302,7 +316,11 @@ function layout(page) {
 <meta property="og:type" content="website"><meta property="og:title" content="${escapeHtml(page.title)}"><meta property="og:description" content="${escapeHtml(page.description || '')}"><meta property="og:locale" content="ru_RU">
 <link rel="icon" href="${r('images/brand-symbol.png')}">
 <link rel="stylesheet" href="${r('styles.css')}"><link rel="stylesheet" href="${r('pages.css')}"><link rel="stylesheet" href="${r('podbor.css')}">
-<script defer src="${r('products.js')}"></script><script defer src="${r('site.js')}"></script>
+<script defer src="${r('products.js')}"></script><script defer src="${r('site.js')}"></script>${
+  page.script ? `<script defer src="${r(page.script)}"></script>` : ''
+}${
+  page.jsonLd ? `\n<script type="application/ld+json">${JSON.stringify(page.jsonLd)}</script>` : ''
+}
 </head>
 <body>
 <!--#header-->
@@ -340,6 +358,8 @@ function collectPages() {
       description: data.description || '',
       lead: data.lead || '',
       draft: Boolean(data.draft),
+      wide: Boolean(data.wide),
+      script: data.script || '',
       changefreq: data.changefreq || 'yearly',
       body: markdown(applyData(body)).replace(/~\//g, '../'.repeat(depth))
     };
@@ -366,9 +386,209 @@ function injectInto(file, depth) {
   swap('header', header(depth, { active: file === 'index.html' ? '' : null }));
   swap('footer', footer(depth));
   if (file === 'index.html' && homeHubs) swap('podbor', homeHubs);
+  if (file === 'index.html' && homeFresh) swap('zhurnal', homeFresh);
   if (next !== original) { writeFileSync(path, next, 'utf8'); return true; }
   return false;
 }
+
+/* ──────────────────── журнал ────────────────────
+   Статьи: content/zhurnal/<рубрика>/<slug>.md → /zhurnal/<рубрика>/<slug>/.
+   Каждая статья собирается в настоящий HTML, а не рисуется скриптом в браузере.
+   Блок «Что взять» строится по списку products из шапки статьи,
+   «Читайте также» — по соседям в той же рубрике. */
+
+const RUBRICS = {
+  'kury-i-yaytso': 'Куры и яйцо',
+  'linka-i-pero': 'Линька и перо',
+  'ratsion-i-premiksy': 'Рацион и премиксы',
+  'molochnoe-podvore': 'Молочное подворье',
+  'zashchita-hozyaystva': 'Защита хозяйства',
+  'o-magazine': 'О магазине'
+};
+
+const RU_MONTHS = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
+const humanDate = iso => {
+  const [y, m, d] = String(iso).split('-').map(Number);
+  return `${d} ${RU_MONTHS[m - 1]} ${y}`;
+};
+
+/* Вопросы из раздела «Частые вопросы» — для разметки FAQPage.
+   Разметка ставится только потому, что эти вопросы видны на самой странице. */
+function extractFaq(md) {
+  const section = md.split(/^##\s+Частые вопросы\s*$/m)[1];
+  if (!section) return [];
+  const stop = section.split(/^##\s+/m)[0];
+  return [...stop.matchAll(/^###\s+(.+)\n+([\s\S]*?)(?=\n###\s|\n*$)/gm)]
+    .map(m => ({ q: m[1].trim(), a: m[2].trim().replace(/\s+/g, ' ') }))
+    .filter(x => x.q && x.a);
+}
+
+function articleCard(a, prefix) {
+  return `<a class="article-card" href="${prefix}zhurnal/${a.rubric}/${a.slug}/">
+   <span class="article-card-rubric">${escapeHtml(RUBRICS[a.rubric] || a.rubric)}</span>
+   <strong>${escapeHtml(a.title)}</strong>
+   <span class="article-card-lead">${escapeHtml(a.lead)}</span>
+   <span class="article-card-open">Читать <span aria-hidden="true">→</span></span>
+  </a>`;
+}
+
+function collectArticles() {
+  const base = join(ROOT, 'content/zhurnal');
+  if (!existsSync(base)) return [];
+  const articles = [];
+  for (const rubric of readdirSync(base)) {
+    const dir = join(base, rubric);
+    if (!statSync(dir).isDirectory()) continue;
+    for (const file of readdirSync(dir).filter(f => f.endsWith('.md'))) {
+      const raw = read(`content/zhurnal/${rubric}/${file}`);
+      const { data, body } = parseFrontMatter(raw);
+      articles.push({
+        rubric,
+        slug: data.slug || file.replace(/\.md$/, ''),
+        title: data.title || file,
+        lead: data.lead || '',
+        description: data.description || data.lead || '',
+        published: data.published || '',
+        updated: data.updated || data.published || '',
+        hub: data.hub || '',
+        hubTitle: data.hubTitle || '',
+        products: Array.isArray(data.products) ? data.products : [],
+        takeTitle: data.takeTitle || 'Что взять',
+        takeNote: data.takeNote || 'Цены на сайте демонстрационные. Купить можно на Ozon — кнопка на странице товара.',
+        sources: Array.isArray(data.sources) ? data.sources : [],
+        faq: extractFaq(body),
+        bodyMarkdown: body
+      });
+    }
+  }
+  return articles.sort((a, b) => String(b.published).localeCompare(String(a.published)));
+}
+
+function buildArticles(articles) {
+  if (!articles.length) return;
+  const products = loadProducts();
+  const byId = id => products.find(p => p.id === id);
+  const prefix = '../../../';
+
+  for (const a of articles) {
+    const picks = a.products.map(byId).filter(Boolean);
+    const neighbours = articles.filter(x => x.rubric === a.rubric && x.slug !== a.slug).slice(0, 2);
+
+    const takeBlock = picks.length ? `<h2>${escapeHtml(a.takeTitle)}</h2>
+<div class="hub-grid">${picks.map(p => hubCard(p, prefix)).join('')}</div>
+<p class="ref-note">${escapeHtml(a.takeNote)}</p>` : '';
+
+    const sourcesBlock = a.sources.length ? `<h2>Источники</h2><ul class="article-sources">${
+      a.sources.map(s => {
+        const [name, url] = s.split('|').map(x => x.trim());
+        return `<li>${url ? `<a href="${url}" target="_blank" rel="nofollow noopener">${escapeHtml(name)}</a>` : escapeHtml(name)}</li>`;
+      }).join('')
+    }</ul>` : '';
+
+    const alsoBlock = (neighbours.length || a.hub) ? `<h2>Читайте также</h2><ul class="article-also">${
+      (a.hub ? [`<li><a href="${prefix}podbor/${a.hub}/">Подбор: ${escapeHtml(a.hubTitle || a.hub)}</a></li>`] : [])
+        .concat(neighbours.map(n => `<li><a href="${prefix}zhurnal/${n.rubric}/${n.slug}/">${escapeHtml(n.title)}</a></li>`))
+        .join('')
+    }</ul>` : '';
+
+    const body = `<div class="article-meta">
+ <span>Рубрика: <a href="${prefix}zhurnal/${a.rubric}/">${escapeHtml(RUBRICS[a.rubric] || a.rubric)}</a></span>
+ ${a.published ? `<span>Опубликовано ${humanDate(a.published)}</span>` : ''}
+ ${a.updated && a.updated !== a.published ? `<span>обновлено ${humanDate(a.updated)}</span>` : ''}
+</div>
+${markdown(applyData(a.bodyMarkdown)).replace(/~\//g, prefix)}
+${takeBlock}
+${sourcesBlock}
+${alsoBlock}
+<p class="hub-back"><a href="${prefix}zhurnal/">← Все статьи журнала</a></p>`;
+
+    const jsonLd = {
+      '@context': 'https://schema.org',
+      '@graph': [
+        {
+          '@type': 'Article',
+          headline: a.title,
+          description: a.description,
+          datePublished: a.published,
+          dateModified: a.updated,
+          inLanguage: 'ru-RU',
+          publisher: { '@type': 'Organization', name: company.shopName }
+        },
+        {
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Главная' },
+            { '@type': 'ListItem', position: 2, name: 'Журнал' },
+            { '@type': 'ListItem', position: 3, name: RUBRICS[a.rubric] || a.rubric },
+            { '@type': 'ListItem', position: 4, name: a.title }
+          ]
+        },
+        // FAQPage добавляется только потому, что эти вопросы видны на самой странице.
+        ...(a.faq.length ? [{
+          '@type': 'FAQPage',
+          mainEntity: a.faq.map(f => ({
+            '@type': 'Question', name: f.q,
+            acceptedAnswer: { '@type': 'Answer', text: f.a }
+          }))
+        }] : [])
+      ]
+    };
+
+    writePage({
+      url: `zhurnal/${a.rubric}/${a.slug}/`,
+      title: a.title,
+      description: a.description,
+      lead: a.lead,
+      changefreq: 'monthly',
+      crumbs: [
+        { text: 'Журнал', href: 'zhurnal/' },
+        { text: RUBRICS[a.rubric] || a.rubric, href: `zhurnal/${a.rubric}/` }
+      ],
+      jsonLd,
+      body
+    });
+  }
+
+  // Страницы рубрик.
+  for (const rubric of [...new Set(articles.map(a => a.rubric))]) {
+    const inRubric = articles.filter(a => a.rubric === rubric);
+    writePage({
+      url: `zhurnal/${rubric}/`,
+      title: RUBRICS[rubric] || rubric,
+      description: `Статьи рубрики «${RUBRICS[rubric] || rubric}» в журнале магазина.`,
+      lead: `Статьи рубрики «${RUBRICS[rubric] || rubric}».`,
+      wide: true,
+      changefreq: 'weekly',
+      crumbs: [{ text: 'Журнал', href: 'zhurnal/' }],
+      body: `<div class="article-grid">${inRubric.map(a => articleCard(a, '../../')).join('')}</div>
+<p class="hub-back"><a href="../">← Все рубрики</a></p>`
+    });
+  }
+
+  // Главная страница журнала.
+  const byRubric = [...new Set(articles.map(a => a.rubric))].map(rubric => {
+    const inRubric = articles.filter(a => a.rubric === rubric);
+    return `<h2><a href="${rubric}/">${escapeHtml(RUBRICS[rubric] || rubric)}</a></h2>
+<div class="article-grid">${inRubric.map(a => articleCard(a, '../')).join('')}</div>`;
+  }).join('');
+
+  writePage({
+    url: 'zhurnal/',
+    title: 'Журнал',
+    description: 'Статьи о кормлении птицы и животных, уходе за выменем и безопасности в хозяйстве. Только по этикетке и проверенным источникам.',
+    lead: 'Разбираем вопросы, которые чаще всего задают покупатели. Нормы и сроки берём с упаковки, при болезни отправляем к ветеринару.',
+    wide: true,
+    changefreq: 'weekly',
+    body: byRubric
+  });
+
+  // Блок «Свежее в журнале» для главной страницы.
+  homeFresh = `<section class="fresh-articles container" aria-label="Свежее в журнале">
+ <div class="section-head"><div><span class="section-label">ЖУРНАЛ</span><h2>Свежее в журнале <span class="wheat">❧</span></h2></div><a href="zhurnal/" class="all-products">Все статьи ›</a></div>
+ <div class="article-grid">${articles.slice(0, 3).map(a => articleCard(a, '')).join('')}</div>
+</section>`;
+}
+let homeFresh = '';
 
 /* ──────────────────── подбор по животному ────────────────────
    Хабы собираются из data/animals.json. Привязка товаров к хабу — строго
@@ -503,6 +723,29 @@ function buildReference() {
     );
     built.push(id);
   }
+  // Нормы ввода для калькулятора: берутся только оттуда, где процент есть на этикетке.
+  // Товар без нормы в калькуляторе не предлагается.
+  const products = loadProducts();
+  const doses = built.map(id => {
+    const data = JSON.parse(read(`data/reference/${id}.json`));
+    const dose = data.dose || {};
+    if (!dose.percent || !dose.gPerKg) return null;
+    const product = products.find(p => p.id === id);
+    return {
+      id,
+      name: product ? product.name : id,
+      percent: dose.percent,
+      gPerKg: dose.gPerKg,
+      spoon: dose.spoon || ''
+    };
+  }).filter(Boolean);
+  writeFileSync(
+    join(ROOT, 'data/doses.js'),
+    `/* Создаётся автоматически из data/reference/*.json. Не редактируйте — запускайте node build.mjs */\n` +
+    `window.__doses = ${JSON.stringify(doses, null, 1)};\n`,
+    'utf8'
+  );
+
   // Список товаров со справочником: страница товара сверяется с ним и не запрашивает
   // несуществующий файл, иначе браузер показывал бы в консоли ошибку 404.
   writeFileSync(
@@ -542,6 +785,10 @@ for (const page of pages) if (page.draft) DRAFTS.add(page.url);
 for (const page of pages) writePage(page);
 console.log(`  страниц собрано: ${pages.length}`);
 
+const articles = collectArticles();
+buildArticles(articles);
+if (articles.length) console.log(`  статей в журнале: ${articles.length}`);
+
 const hubs = buildHubs();
 if (hubs.length) console.log(`  подбор по животному: ${hubs.length} разделов`);
 
@@ -557,7 +804,10 @@ writeSitemap([
   { url: '', changefreq: 'weekly' },
   ...pages.filter(p => !p.draft).map(p => ({ url: p.url, changefreq: p.changefreq })),
   ...(hubs.length ? [{ url: 'podbor/', changefreq: 'monthly' }] : []),
-  ...hubs.map(h => ({ url: `podbor/${h.slug}/`, changefreq: 'monthly' }))
+  ...hubs.map(h => ({ url: `podbor/${h.slug}/`, changefreq: 'monthly' })),
+  ...(articles.length ? [{ url: 'zhurnal/', changefreq: 'weekly' }] : []),
+  ...[...new Set(articles.map(a => a.rubric))].map(r => ({ url: `zhurnal/${r}/`, changefreq: 'weekly' })),
+  ...articles.map(a => ({ url: `zhurnal/${a.rubric}/${a.slug}/`, changefreq: 'monthly' }))
 ]);
 
 const drafts = pages.filter(p => p.draft);
