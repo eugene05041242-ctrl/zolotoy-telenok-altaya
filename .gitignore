@@ -7,3 +7,10 @@ desktop.ini
 .claude/
 .vscode/
 .idea/
+
+# Исходные материалы исследования (не публикуются)
+_source/
+
+# Служебное
+shots/
+node_modules/

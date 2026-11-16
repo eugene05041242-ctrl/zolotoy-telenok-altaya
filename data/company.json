@@ -1,0 +1,45 @@
+{
+  "_comment": "Реквизиты ИП. Заполните поля перед публикацией. Пустое поле на сайте не показывается — выдуманные значения не подставляются.",
+
+  "siteUrl": "",
+  "_siteUrl_hint": "Адрес сайта со слэшем на конце, например https://eugene05041242-ctrl.github.io/zolotoy-telenok-altaya/ . Пока пусто — sitemap.xml не собирается, ссылки относительные.",
+
+  "shopName": "Золотой телёнок Алтая",
+  "city": "Барнаул",
+  "region": "Алтайский край",
+
+  "legalName": "",
+  "_legalName_hint": "Полностью: ИП Фамилия Имя Отчество",
+  "ogrnip": "",
+  "inn": "",
+  "address": "",
+  "_address_hint": "Адрес для претензий и корреспонденции",
+  "email": "",
+  "claimsEmail": "",
+  "_claimsEmail_hint": "Адрес для претензий. Если пусто, используется email",
+  "phone": "",
+  "workHours": "",
+
+  "ozonShopUrl": "https://www.ozon.ru/seller/zolotoy-telenok-altaya/",
+  "telegram": "",
+  "vk": "",
+  "max": "",
+
+  "acceptsRequests": false,
+  "_acceptsRequests_hint": "false — сайт работает как витрина, покупка только на Ozon. Переключать на true только вместе с офертой, согласием на обработку ПДн и реквизитами (см. отчёт, раздел 3).",
+
+  "metrikaId": "",
+  "_metrikaId_hint": "Пока пусто — cookie-баннер и Метрика не подключаются.",
+
+  "minShelfLife": "",
+  "_minShelfLife_hint": "Минимальный остаточный срок годности при отправке, например «не менее 6 месяцев»",
+
+  "supplierBrands": ["БиоПро", "Дар Велеса", "Ваше хозяйство", "СПАЗ-фарм", "Фармакс"],
+
+  "ozonStats": {
+    "rating": "4,9",
+    "reviews": "около 5,4 тыс.",
+    "orders": "около 12,8 тыс.",
+    "asOf": "16.11.2026"
+  }
+}
