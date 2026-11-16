@@ -8,7 +8,7 @@
 <meta property="og:type" content="website"><meta property="og:title" content="Калькулятор премикса"><meta property="og:description" content="Посчитайте, сколько премикса нужно на ваш объём корма. Норма подставляется с этикетки выбранного товара."><meta property="og:locale" content="ru_RU">
 <link rel="icon" href="../images/brand-symbol.png">
 <link rel="stylesheet" href="../styles.css"><link rel="stylesheet" href="../pages.css"><link rel="stylesheet" href="../podbor.css">
-<script defer src="../products.js"></script><script defer src="../site.js"></script><script defer src="../kalkulyator.js"></script>
+<script defer src="../products.js"></script><script defer src="../site.js"></script><script defer src="../kalkulyator.js"></script><script defer src="../data/search-index.js"></script><script defer src="../search.js"></script>
 </head>
 <body>
 <!--#header-->
@@ -46,18 +46,18 @@
  <output class="calc-result" id="calcResult" aria-live="polite"></output>
  <p class="calc-hint" id="calcHint"></p>
 </div>
-<h2>Как им пользоваться</h2>
+<h2 id="kak-im-polzovatsya">Как им пользоваться</h2>
 <ol><li>Выберите товар — норма ввода подставится с его этикетки.</li><li>Укажите, сколько корма вы готовите.</li><li>Получите количество премикса в граммах.</li></ol>
 <p>Если вашего товара нет в списке, выберите «Другой товар» и введите норму с его упаковки вручную. В списке только те товары, у которых норма в процентах напечатана на этикетке: подставлять чужие цифры мы не будем.</p>
-<h2>Откуда берётся формула</h2>
+<h2 id="otkuda-beretsya-formula">Откуда берётся формула</h2>
 <p>Арифметика простая и ровно такая, как указано на упаковках:</p>
 <blockquote><p>граммы премикса = килограммы корма × процент × 10</p></blockquote>
 <p>То есть 1% — это 10 г на 1 кг корма, 3% — 30 г, 0,5% — 5 г.</p>
 <div class="warning"><p>Это ориентир для расчёта, а не замена инструкции. Действительной считается норма на вашей упаковке. Неправильная дозировка премикса опасна, поэтому не округляйте в большую сторону «на всякий случай» и не складывайте два премикса без указания производителя.</p></div>
-<h2>Про ложки</h2>
+<h2 id="pro-lozhki">Про ложки</h2>
 <p>Ложки мы показываем только там, где производитель сам привёл такой пересчёт для своего товара. Универсальной таблицы ложек не существует: насыпная плотность у премиксов разная, и одна и та же ложка у двух товаров весит по-разному.</p>
 <p>Если нужна точность — взвешивайте.</p>
-<h2>Чего этот калькулятор не делает</h2>
+<h2 id="chego-etot-kalkulyator-ne-delaet">Чего этот калькулятор не делает</h2>
 <ul><li><strong>Не считает дозу от массы животного.</strong> Норма премикса считается от массы корма.</li><li><strong>Не считает дозу для кошек, собак и лошадей.</strong> Производители для них применение не указывают.</li><li><strong>Не складывает два премикса.</strong> Это отдельный вопрос, разобранный <a href="../zhurnal/ratsion-i-premiksy/dva-premiksa-odnovremenno/">в статье</a>.</li><li><strong>Не считает расход крема</strong> и норму раскладки приманок. Таких данных на этикетках нет.</li></ul>
 <p>Отдельный расчёт для свиней по массе животного — на странице <a href="../kalkulyator/svini/">калькулятора для свиней</a>.</p>
 <p>Пошаговая инструкция по смешиванию — в статье <a href="../zhurnal/ratsion-i-premiksy/kak-vvesti-premiks/">как ввести премикс в корм</a>.</p>

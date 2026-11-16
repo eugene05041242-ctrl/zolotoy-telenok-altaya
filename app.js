@@ -11,11 +11,29 @@ function notify(msg){const el=$('#toast');el.textContent=msg;el.classList.add('s
 function totalCount(){return Object.values(cart).reduce((a,b)=>a+b,0)}
 function totalAmount(){return Object.entries(cart).reduce((a,[k,n])=>a+unitPrice(k)*n,0)}
 function save(){try{localStorage.setItem('altai-store-demo-v2',JSON.stringify(cart))}catch(e){}}
-function drawProducts(){const list=products.filter(p=>(filter==='all'||p.category===filter)&&(p.name+' '+p.categoryLabel).toLocaleLowerCase('ru').includes(query.toLocaleLowerCase('ru')));
+/* Фильтр по животному. Состав групп берётся из data/animals-index.js,
+   который сборка делает из data/animals.json: товар попадает в группу,
+   только если это животное указано на его этикетке. */
+let animalFilter='';
+function animalProducts(slug){const group=(window.__animalFilters||[]).find(a=>a.slug===slug);return group?group.products:null}
+function drawAnimalFilters(){const box=$('#animalFilters');if(!box)return;const groups=window.__animalFilters||[];
+ if(!groups.length){box.hidden=true;return}
+ box.hidden=false;
+ box.innerHTML='<span class="animal-filters-label">Для кого:</span>'+
+  '<button type="button" class="filter active" data-animal="">Все</button>'+
+  groups.map(g=>`<button type="button" class="filter" data-animal="${g.slug}">${g.title}</button>`).join('');
+ box.addEventListener('click',e=>{const b=e.target.closest('[data-animal]');if(!b)return;
+  animalFilter=b.dataset.animal;
+  box.querySelectorAll('[data-animal]').forEach(x=>x.classList.toggle('active',x.dataset.animal===animalFilter));
+  drawProducts()});
+}
+function drawProducts(){const allowed=animalFilter?animalProducts(animalFilter):null;
+ const list=products.filter(p=>(filter==='all'||p.category===filter)&&(!allowed||allowed.includes(p.id))&&(p.name+' '+p.categoryLabel).toLocaleLowerCase('ru').includes(query.toLocaleLowerCase('ru')));
  $('#productGrid').innerHTML=list.map(p=>`<article class="product-card" data-product-id="${p.id}"><div class="product-photo"><span class="product-badge ${p.caution?'caution':''}">${p.badge}</span><a href="product.html?id=${encodeURIComponent(p.id)}" class="product-photo-link" aria-label="Открыть страницу товара: ${p.name}"><img src="${p.image}" alt="${p.name}" loading="lazy"></a></div><div class="product-content"><span class="product-category">${p.categoryLabel}</span>${p.category==='care' && p.badge==='Зоокосметический крем' ? '<span class="product-type">Крем зоокосметический</span>' : ''}<a class="product-title" href="product.html?id=${encodeURIComponent(p.id)}">${p.name}</a><div class="product-desc">Оригинальная фотография из карточки товара</div><div class="product-price"><strong>${rub(p.price)}</strong><small>Тестовая цена</small></div><div class="product-actions"><button type="button" class="to-cart" data-add="${p.id}">🛒 В корзину</button><button type="button" class="to-ozon" data-ozon="${p.id}">Купить на <span class="ozon-word">Ozon</span></button></div></div></article>`).join('');
  const n=list.length;$('#catalogCount').textContent=n+' '+(n===1?'товар':n>1&&n<5?'товара':'товаров');$('#emptyState').hidden=n!==0;
 }
-function setFilter(f){filter=f;$$('.filter').forEach(el=>el.classList.toggle('active',el.dataset.category===f));drawProducts()}
+function resetAnimal(){animalFilter='';const box=$('#animalFilters');if(box)box.querySelectorAll('[data-animal]').forEach(x=>x.classList.toggle('active',x.dataset.animal===''))}
+function setFilter(f){filter=f;resetAnimal();$$('.filter').forEach(el=>el.classList.toggle('active',el.dataset.category===f));drawProducts()}
 function drawCart(){save();let n=totalCount();$('#cartCount').textContent=n;$('#drawerCount').textContent='('+n+')';$('#cartTotal').textContent=rub(totalAmount());$('#checkoutBtn').disabled=n===0;$('#checkoutBtn').style.opacity=n?1:.4;
  const items=Object.keys(cart).filter(k=>cart[k]>0).map(k=>{const {id,box}=splitKey(k);return {key:k,box,p:byId(id)}}).filter(x=>x.p);
  $('#cartItems').innerHTML=items.length?items.map(({key,box,p})=>`<div class="cart-row"><img src="${p.image}" alt=""><div class="cart-row-info"><strong>${p.name}</strong><small>${box?`Коробка ${p.box.qty} шт. · ${rub(p.box.price)} · оптовая цена, демо`:'Демонстрационная цена'}</small><div class="cart-line-price">${rub(unitPrice(key)*cart[key])}</div><div class="qty"><button data-id="${key}" data-delta="-1" aria-label="Уменьшить количество ${p.name}">−</button><span>${cart[key]}${box?' кор.':''}</span><button data-id="${key}" data-delta="1" aria-label="Увеличить количество ${p.name}">+</button><button class="remove" data-remove="${key}">Удалить</button></div></div></div>`).join(''):`<div class="cart-empty"><svg viewBox="0 0 64 64"><path d="M5 8h8l7 33h30l7-23H15"/><circle cx="25" cy="52" r="3"/><circle cx="49" cy="52" r="3"/></svg><h3>В корзине пока пусто</h3><p>Добавьте товары, чтобы посмотреть оформление заказа.</p></div>`;
@@ -45,7 +63,7 @@ $$('.modal-overlay').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)c
 $('#mobileMenuToggle').addEventListener('click',()=>{const el=$('#mobileNav'),opened=el.classList.toggle('open');$('#mobileMenuToggle').setAttribute('aria-expanded',String(opened))});$$('#mobileNav a').forEach(a=>a.addEventListener('click',()=>{$('#mobileNav').classList.remove('open');$('#mobileMenuToggle').setAttribute('aria-expanded','false')}));
 const params=new URLSearchParams(location.search);
 if(params.has('search')){query=params.get('search')||'';$('#catalogSearch').value=query}
-drawProducts();drawCart();
+drawAnimalFilters();drawProducts();drawCart();
 if(params.has('add')){const id=params.get('add'),count=Number(params.get('qty')||1);if(known.has(id)){
  const amount=Number.isFinite(count)?Math.max(1,Math.min(99,Math.trunc(count))):1;
  cart[id]=Math.min(99,(cart[id]||0)+amount);drawCart();notify('Товар добавлен в корзину (демо)')

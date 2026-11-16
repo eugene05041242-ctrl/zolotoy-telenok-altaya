@@ -5,7 +5,7 @@
 <meta name="theme-color" content="#113a26">
 <meta name="description" content="Золотой теленок Алтая — демонстрационный интернет-магазин кормовых добавок, средств ухода и товаров для животных и хозяйства.">
 <title>Золотой теленок Алтая — интернет-магазин для животных и хозяйства</title>
-<link rel="icon" href="images/brand-symbol.png"><link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="pages.css"><link rel="stylesheet" href="podbor.css"><link rel="stylesheet" href="hero-carousel.css"><link rel="stylesheet" href="reviews.css"><script defer src="products.js"></script><script defer src="reviews.js"></script><script defer src="app.js"></script><script defer src="hero-carousel.js"></script>
+<link rel="icon" href="images/brand-symbol.png"><link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="pages.css"><link rel="stylesheet" href="podbor.css"><link rel="stylesheet" href="hero-carousel.css"><link rel="stylesheet" href="reviews.css"><script defer src="products.js"></script><script defer src="reviews.js"></script><script defer src="data/search-index.js"></script><script defer src="search.js"></script><script defer src="data/animals-index.js"></script><script defer src="app.js"></script><script defer src="hero-carousel.js"></script>
 </head>
 <body>
 <!--#header-->
@@ -99,6 +99,7 @@
  <section class="catalog container" id="catalog">
   <div class="section-head"><div><span class="section-label">НАШ АССОРТИМЕНТ</span><h2>Хиты продаж <span class="wheat">❧</span></h2></div><a href="#catalog" class="all-products" id="showAllLink">Смотреть все товары ›</a></div>
   <div class="filters" id="filters" role="group" aria-label="Фильтр каталога"><button class="filter active" data-category="all">Все товары</button><button class="filter" data-category="care">Уход за животными</button><button class="filter" data-category="feed">Кормовые добавки</button><button class="filter" data-category="protection">Защита от вредителей</button><span class="count-results" id="catalogCount">18 товаров</span></div>
+  <div class="animal-filters" id="animalFilters" role="group" aria-label="Фильтр по животному" hidden></div>
   <div class="product-grid" id="productGrid" aria-live="polite"></div>
   <div class="no-results" id="emptyState" hidden><h3>Товары не найдены</h3><p>Попробуйте другое слово или выберите все категории.</p><button class="dark-btn" id="clearFilters">Показать все товары</button></div>
   <p class="price-note-global">* На этой версии сайта все цены указаны для примера. Наличие, реальные цены и доставка ещё не настроены. Кнопки Ozon работают у товаров, для которых добавлены точные ссылки. Для остальных ссылки появятся позже.</p>

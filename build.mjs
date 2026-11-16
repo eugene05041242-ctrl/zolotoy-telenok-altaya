@@ -30,6 +30,26 @@ const SITE_URL = (company.siteUrl || '').trim();
 
 const escapeHtml = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
+/* Транслитерация для якорей заголовков. */
+const TRANSLIT = {
+  а: 'a', б: 'b', в: 'v', г: 'g', д: 'd', е: 'e', ё: 'e', ж: 'zh', з: 'z', и: 'i', й: 'y',
+  к: 'k', л: 'l', м: 'm', н: 'n', о: 'o', п: 'p', р: 'r', с: 's', т: 't', у: 'u', ф: 'f',
+  х: 'h', ц: 'ts', ч: 'ch', ш: 'sh', щ: 'shch', ъ: '', ы: 'y', ь: '', э: 'e', ю: 'yu', я: 'ya'
+};
+const slugify = text => text.toLowerCase()
+  .replace(/[а-яё]/g, c => TRANSLIT[c] ?? c)
+  .replace(/[^a-z0-9]+/g, '-')
+  .replace(/^-+|-+$/g, '')
+  .slice(0, 60) || 'razdel';
+
+/* Текст без разметки — для индекса поиска. */
+const plainText = html => html
+  .replace(/<script[\s\S]*?<\/script>/gi, ' ')
+  .replace(/<[^>]+>/g, ' ')
+  .replace(/&[a-z]+;/gi, ' ')
+  .replace(/\s+/g, ' ')
+  .trim();
+
 function inline(src) {
   const code = [];
   let s = src.replace(/`([^`]+)`/g, (_, c) => `\u0000${code.push(c) - 1}\u0000`);
@@ -68,7 +88,10 @@ function markdown(src) {
     const heading = line.match(/^(#{1,6})\s+(.*)$/);
     if (heading) {
       const level = heading[1].length;
-      out.push(`<h${level}>${inline(heading[2].trim())}</h${level}>`);
+      const text = heading[2].trim();
+      // Якорь нужен, чтобы на раздел можно было сослаться из поиска.
+      const id = level === 2 ? ` id="${slugify(text)}"` : '';
+      out.push(`<h${level}${id}>${inline(text)}</h${level}>`);
       i++;
       continue;
     }
@@ -318,7 +341,7 @@ function layout(page) {
 <link rel="stylesheet" href="${r('styles.css')}"><link rel="stylesheet" href="${r('pages.css')}"><link rel="stylesheet" href="${r('podbor.css')}">
 <script defer src="${r('products.js')}"></script><script defer src="${r('site.js')}"></script>${
   page.script ? `<script defer src="${r(page.script)}"></script>` : ''
-}${
+}<script defer src="${r('data/search-index.js')}"></script><script defer src="${r('search.js')}"></script>${
   page.jsonLd ? `\n<script type="application/ld+json">${JSON.stringify(page.jsonLd)}</script>` : ''
 }
 </head>
@@ -757,6 +780,91 @@ function buildReference() {
   return built;
 }
 
+/* ──────────────────── индекс поиска и фильтр каталога ────────────────────
+   Индекс собирается в два файла: search-index.json (читаемый исходник)
+   и data/search-index.js (его же содержимое в виде скрипта). Страницы
+   подключают именно .js: при открытии сайта с диска по file:// браузер
+   запрещает читать локальный JSON через fetch. */
+
+function buildSearchIndex(pages, articles, hubs) {
+  const products = loadProducts();
+  const entries = [];
+
+  for (const p of products) {
+    entries.push({
+      type: 'Товар',
+      title: p.name,
+      url: `product.html?id=${encodeURIComponent(p.id)}`,
+      text: [p.name, p.categoryLabel, p.badge, p.description].filter(Boolean).join(' ')
+    });
+  }
+
+  for (const a of articles) {
+    entries.push({
+      type: 'Статья',
+      title: a.title,
+      url: `zhurnal/${a.rubric}/${a.slug}/`,
+      text: [a.title, a.lead, plainText(markdown(a.bodyMarkdown))].join(' ')
+    });
+  }
+
+  for (const h of hubs) {
+    entries.push({
+      type: 'Подбор',
+      title: h.title,
+      url: `podbor/${h.slug}/`,
+      text: [h.title, h.lead, (h.notes || []).join(' ')].join(' ')
+    });
+  }
+
+  for (const page of pages) {
+    if (page.draft) continue;
+    const text = plainText(page.body);
+    entries.push({ type: 'Страница', title: page.title, url: page.url, text: [page.title, page.lead, text].join(' ') });
+
+    // Разделы страницы вопросов и ответов индексируются отдельно.
+    if (page.url === 'faq/') {
+      for (const m of page.body.matchAll(/<h2 id="([^"]+)">([\s\S]*?)<\/h2>([\s\S]*?)(?=<h2 |$)/g)) {
+        entries.push({
+          type: 'Вопросы и ответы',
+          title: plainText(m[2]),
+          url: `faq/#${m[1]}`,
+          text: plainText(m[2] + ' ' + m[3])
+        });
+      }
+    }
+  }
+
+  // В индексе хранится укороченный текст: он нужен только для поиска совпадений.
+  const trimmed = entries.map(e => ({ ...e, text: e.text.slice(0, 1200).toLowerCase() }));
+
+  writeFileSync(join(ROOT, 'search-index.json'), JSON.stringify(trimmed, null, 1), 'utf8');
+  writeFileSync(
+    join(ROOT, 'data/search-index.js'),
+    `/* Создаётся автоматически. Не редактируйте — запускайте node build.mjs */\n` +
+    `window.__searchIndex = ${JSON.stringify(trimmed)};\n`,
+    'utf8'
+  );
+  return trimmed.length;
+}
+
+/* Соответствие «раздел подбора → товары» для фильтра каталога по животному. */
+function buildAnimalIndex(hubs) {
+  const map = hubs.map(h => ({
+    slug: h.slug,
+    title: h.title,
+    products: (h.groups ? h.groups.flatMap(g => g.products) : h.products) || []
+  })).filter(h => h.products.length);
+
+  writeFileSync(
+    join(ROOT, 'data/animals-index.js'),
+    `/* Создаётся автоматически из data/animals.json. Не редактируйте — запускайте node build.mjs */\n` +
+    `window.__animalFilters = ${JSON.stringify(map, null, 1)};\n`,
+    'utf8'
+  );
+  return map.length;
+}
+
 /* ───────────────────────── sitemap и robots ───────────────────────── */
 
 function writeSitemap(urls) {
@@ -794,6 +902,9 @@ if (hubs.length) console.log(`  подбор по животному: ${hubs.len
 
 const reference = buildReference();
 if (reference.length) console.log(`  справочник товаров: ${reference.length} файлов`);
+
+console.log(`  индекс поиска: ${buildSearchIndex(pages, articles, hubs)} записей`);
+console.log(`  фильтр каталога по животному: ${buildAnimalIndex(hubs)} разделов`);
 
 for (const [file, depth] of [['index.html', 0], ['product.html', 0]]) {
   if (injectInto(file, depth)) console.log(`  обновлены шапка и подвал: ${file}`);
