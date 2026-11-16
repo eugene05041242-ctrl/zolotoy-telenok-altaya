@@ -282,7 +282,12 @@ function layout(page) {
   const depth = page.url === '' ? 0 : page.url.split('/').filter(Boolean).length;
   const r = h => rel(depth, h);
   const canonical = SITE_URL ? `\n<link rel="canonical" href="${SITE_URL}${page.url}">` : '';
-  const crumbs = [`<a href="${r('index.html')}">Главная</a>`, `<span>${escapeHtml(page.title)}</span>`].join('<span>›</span>');
+  const trail = page.crumbs || [];
+  const crumbs = [
+    `<a href="${r('index.html')}">Главная</a>`,
+    ...trail.map(c => `<a href="${r(c.href)}">${escapeHtml(c.text)}</a>`),
+    `<span>${escapeHtml(page.title)}</span>`
+  ].join('<span>›</span>');
   const draftNote = page.draft
     ? `<div class="draft-note" role="note"><b>Черновик, не публиковать.</b> Страница станет действительной после того, как в <code>data/company.json</code> будут заполнены реквизиты ИП.</div>`
     : '';
@@ -296,7 +301,7 @@ function layout(page) {
 <title>${escapeHtml(page.title)} — ${company.shopName}</title>${canonical}
 <meta property="og:type" content="website"><meta property="og:title" content="${escapeHtml(page.title)}"><meta property="og:description" content="${escapeHtml(page.description || '')}"><meta property="og:locale" content="ru_RU">
 <link rel="icon" href="${r('images/brand-symbol.png')}">
-<link rel="stylesheet" href="${r('styles.css')}"><link rel="stylesheet" href="${r('pages.css')}">
+<link rel="stylesheet" href="${r('styles.css')}"><link rel="stylesheet" href="${r('pages.css')}"><link rel="stylesheet" href="${r('podbor.css')}">
 <script defer src="${r('products.js')}"></script><script defer src="${r('site.js')}"></script>
 </head>
 <body>
@@ -306,7 +311,7 @@ ${header(depth, { active: page.url })}
 <main class="text-main container">
  <nav class="breadcrumbs" aria-label="Навигационная цепочка">${crumbs}</nav>
  ${draftNote}
- <article class="text-page">
+ <article class="text-page${page.wide ? ' text-page-wide' : ''}">
   <h1>${escapeHtml(page.title)}</h1>
   ${page.lead ? `<p class="text-lead">${inline(page.lead)}</p>` : ''}
   ${page.body}
@@ -360,9 +365,119 @@ function injectInto(file, depth) {
   };
   swap('header', header(depth, { active: file === 'index.html' ? '' : null }));
   swap('footer', footer(depth));
+  if (file === 'index.html' && homeHubs) swap('podbor', homeHubs);
   if (next !== original) { writeFileSync(path, next, 'utf8'); return true; }
   return false;
 }
+
+/* ──────────────────── подбор по животному ────────────────────
+   Хабы собираются из data/animals.json. Привязка товаров к хабу — строго
+   по назначению с этикетки; товар, назначение которого не подтверждено,
+   в хаб не ставится. Товары магазина на Ozon, которых нет в каталоге сайта,
+   показываются ссылкой без цены и корзины.
+   Цен и кнопок покупки в хабах нет ни у одной группы товаров. */
+
+/* products.js — обычный скрипт браузера без обращений к странице,
+   поэтому его можно выполнить здесь и получить массив товаров. */
+function loadProducts() {
+  const src = read('products.js');
+  return new Function(`${src}\nreturn products;`)();
+}
+
+const HUB_DISCLAIMER = {
+  feed: 'Кормовая добавка. Не является лекарственным средством. Применяйте по инструкции производителя. При признаках заболевания обратитесь к ветеринарному специалисту.',
+  care: 'Средство для ухода за кожей. Не является лекарственным средством для ветеринарного применения. При покраснении, отёке или уплотнении вымени обратитесь к ветеринарному специалисту.',
+  protection: 'Прочитайте инструкцию на упаковке и применяйте средство строго по ней. Опасно для человека, домашних и сельскохозяйственных животных и птицы. Храните отдельно от продуктов и кормов. При отравлении немедленно обратитесь к врачу или ветеринарному специалисту и возьмите упаковку.'
+};
+
+function hubCard(product, prefix) {
+  return `<a class="hub-card" href="${prefix}product.html?id=${encodeURIComponent(product.id)}">
+   <span class="hub-card-photo"><img src="${prefix}${product.image}" alt="" loading="lazy"></span>
+   <span class="hub-card-text">
+    <span class="hub-card-name">${escapeHtml(product.name)}</span>
+    <span class="hub-card-type">${escapeHtml(product.categoryLabel)}</span>
+    <span class="hub-card-open">Подробнее <span aria-hidden="true">→</span></span>
+   </span>
+  </a>`;
+}
+
+function ozonCard(item) {
+  return `<div class="hub-ozon-card">
+   <span class="hub-ozon-mark">В каталоге на Ozon</span>
+   <strong>${escapeHtml(item.name)}</strong>
+   ${item.note ? `<span class="hub-ozon-note">${escapeHtml(item.note)}</span>` : ''}
+   <a href="https://www.ozon.ru/product/${item.sku}/" target="_blank" rel="nofollow noopener">Смотреть на Ozon ↗</a>
+  </div>`;
+}
+
+function buildHubs() {
+  if (!existsSync(join(ROOT, 'data/animals.json'))) return [];
+  const { hubs } = readJSON('data/animals.json');
+  const products = loadProducts();
+  const byId = id => products.find(p => p.id === id);
+  const prefix = '../../';
+
+  for (const hub of hubs) {
+    const groups = hub.groups || [{ title: null, products: hub.products || [] }];
+    const used = groups.flatMap(g => g.products).map(byId).filter(Boolean);
+
+    const safety = hub.safetyFirst
+      ? `<div class="warning"><h2>Сначала о безопасности</h2><ul>${hub.notes.map(n => `<li>${escapeHtml(n)}</li>`).join('')}</ul></div>`
+      : (hub.notes?.length ? `<h2>Что важно знать</h2><ul>${hub.notes.map(n => `<li>${escapeHtml(n)}</li>`).join('')}</ul>` : '');
+
+    const own = groups.map(g => {
+      const cards = g.products.map(byId).filter(Boolean).map(p => hubCard(p, prefix)).join('');
+      if (!cards) return '';
+      return `${g.title ? `<h3>${escapeHtml(g.title)}</h3>` : ''}<div class="hub-grid">${cards}</div>`;
+    }).join('');
+
+    const ozon = (hub.ozonOnly || []).map(ozonCard).join('');
+    const categories = [...new Set(used.map(p => p.category))];
+
+    const body = `${safety}
+${own ? `<h2>Товары из нашего каталога</h2>${hub.safetyFirst ? '<p class="ref-note">Цен и кнопок покупки в этом разделе нет: ссылки ведут на страницы товаров, где приведены меры безопасности.</p>' : ''}${own}` : ''}
+${ozon ? `<h2>Есть в нашем магазине на Ozon</h2><p>Этих товаров пока нет в каталоге сайта. Открыть их можно на Ozon — цену и наличие смотрите там.</p><div class="hub-ozon-grid">${ozon}</div>` : ''}
+${categories.map(c => HUB_DISCLAIMER[c] ? `<p class="hub-disclaimer">${HUB_DISCLAIMER[c]}</p>` : '').join('')}
+<p class="hub-back"><a href="${prefix}podbor/">← Все разделы подбора</a></p>`;
+
+    writePage({
+      url: `podbor/${hub.slug}/`,
+      title: hub.title,
+      description: hub.description,
+      lead: hub.lead,
+      wide: true,
+      changefreq: 'monthly',
+      crumbs: [{ text: 'Подбор по животному', href: 'podbor/' }],
+      body
+    });
+  }
+
+  const tiles = hubs.map(h =>
+    `<a class="hub-tile" href="${h.slug}/"><strong>${escapeHtml(h.title)}</strong><span>${escapeHtml(h.lead)}</span><span class="hub-tile-open">Открыть <span aria-hidden="true">→</span></span></a>`
+  ).join('');
+
+  writePage({
+    url: 'podbor/',
+    title: 'Подбор по животному',
+    description: 'Выберите животное — покажем товары, у которых оно указано на этикетке производителя.',
+    lead: 'Выберите, для кого подбираете корм или уход. В каждом разделе собраны товары, у которых это животное указано на этикетке производителя.',
+    wide: true,
+    changefreq: 'monthly',
+    body: `<div class="hub-tiles">${tiles}</div>
+<p class="hub-disclaimer">Если животного нет на этикетке, производитель применение для него не указывает — норму в таком случае мы подсказать не можем. Обратитесь к ветеринарному специалисту.</p>`
+  });
+
+  // Блок плиток для главной страницы (подставляется между метками <!--#podbor-->).
+  homeHubs = `<section class="categories-hubs container" aria-label="Подбор по животному">
+ <div class="section-head"><div><span class="section-label">ПОДБОР ПО ЖИВОТНОМУ</span><h2>Для кого подбираете? <span class="wheat">❧</span></h2></div><a href="podbor/" class="all-products">Все разделы ›</a></div>
+ <div class="hub-tiles compact">${hubs.map(h =>
+   `<a class="hub-tile" href="podbor/${h.slug}/"><strong>${escapeHtml(h.title)}</strong><span class="hub-tile-open">Открыть <span aria-hidden="true">→</span></span></a>`
+ ).join('')}</div>
+</section>`;
+
+  return hubs;
+}
+let homeHubs = '';
 
 /* ──────────────────── справочник товара ────────────────────
    Источник данных — data/reference/<id>.json (по файлу на товар).
@@ -427,6 +542,9 @@ for (const page of pages) if (page.draft) DRAFTS.add(page.url);
 for (const page of pages) writePage(page);
 console.log(`  страниц собрано: ${pages.length}`);
 
+const hubs = buildHubs();
+if (hubs.length) console.log(`  подбор по животному: ${hubs.length} разделов`);
+
 const reference = buildReference();
 if (reference.length) console.log(`  справочник товаров: ${reference.length} файлов`);
 
@@ -437,7 +555,9 @@ for (const [file, depth] of [['index.html', 0], ['product.html', 0]]) {
 // В карту сайта попадают главная и все страницы, кроме черновиков.
 writeSitemap([
   { url: '', changefreq: 'weekly' },
-  ...pages.filter(p => !p.draft).map(p => ({ url: p.url, changefreq: p.changefreq }))
+  ...pages.filter(p => !p.draft).map(p => ({ url: p.url, changefreq: p.changefreq })),
+  ...(hubs.length ? [{ url: 'podbor/', changefreq: 'monthly' }] : []),
+  ...hubs.map(h => ({ url: `podbor/${h.slug}/`, changefreq: 'monthly' }))
 ]);
 
 const drafts = pages.filter(p => p.draft);
