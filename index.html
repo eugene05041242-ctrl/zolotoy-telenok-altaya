@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#113a26">
+<meta name="description" content="Золотой теленок Алтая — демонстрационный интернет-магазин кормовых добавок, средств ухода и товаров для животных и хозяйства.">
+<title>Золотой теленок Алтая — интернет-магазин для животных и хозяйства</title>
+<link rel="icon" href="images/brand-symbol.png"><link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="hero-carousel.css"><link rel="stylesheet" href="reviews.css"><script defer src="products.js"></script><script defer src="reviews.js"></script><script defer src="app.js"></script><script defer src="hero-carousel.js"></script>
+</head>
+<body>
+<div class="demo-bar"><span class="demo-indicator"></span><b>Макет магазина</b><span class="separator">·</span> Цены демонстрационные, заказы и платежи пока не принимаются</div>
+<header class="site-header" id="top">
+ <div class="header-top container">
+  <a class="identity" href="#top" aria-label="Золотой теленок Алтая — на главную"><img src="images/brand-symbol.png" alt="" width="102" height="60"><span class="brand-words"><strong>Золотой теленок</strong><strong class="brand-bottom">Алтая<span class="golden-stroke"></span></strong></span></a>
+  <div class="brand-tagline">ТОВАРЫ ДЛЯ ЗДОРОВЬЯ<br>ЖИВОТНЫХ И УСПЕШНОГО<br>ХОЗЯЙСТВА <svg class="mountains" viewBox="0 0 125 50" aria-hidden="true"><path d="M2 44 30 29 43 37 67 9 88 29 100 23 122 43 M39 37 51 25 M64 13 72 23 M85 28 90 37"/></svg></div>
+  <div class="head-meta"><span class="meta-icon">♧</span><span>Алтайский характер<br><small>в каждом товаре</small></span></div>
+  <div class="head-meta"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3 4 5c-1 9 8 18 16 15l2-3-6-4-3 3c-3-2-6-5-7-8l3-3-2-2z"/></svg><span>Для всей России<br><small>Доставка — при запуске</small></span></div>
+  <div class="head-actions"><button id="mobileMenuToggle" class="menu-toggle" aria-label="Открыть меню" aria-expanded="false">☰</button><button class="cart-top" id="openCart" aria-label="Открыть корзину"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h3l2 12h12l3-9H6M9 21h.01M18 21h.01"/></svg><span>Корзина</span><b id="cartCount">0</b></button></div>
+ </div>
+ <nav class="navline" aria-label="Навигация по сайту"><div class="nav-inner container"><a class="catalog-link" href="#catalog"><span>☰</span> Каталог товаров <span>⌄</span></a><div class="nav-links" id="mobileNav"><a href="#about">О магазине</a><a href="#how-to-buy">Доставка и оплата</a><a href="#reviews">Отзывы</a><a href="#footer">Контакты</a></div><label class="nav-search"><input id="catalogSearch" type="search" placeholder="Поиск по товарам и названиям..." aria-label="Поиск товаров"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="m15 15 6 6"/></svg></label></div></nav>
+</header>
+<main>
+ <section class="hero hero-carousel" id="heroCarousel" aria-roledescription="карусель" aria-label="Баннеры интернет-магазина">
+  <div class="hero-slides" id="heroSlides" aria-live="off">
+   <!-- Баннер 2А: существующий текст и оформление сохранены. -->
+   <div class="hero-slide hero-slide-birds is-active" data-hero-slide="0" role="group" aria-roledescription="слайд" aria-label="1 из 5" aria-hidden="false">
+    <img class="hero-second-photo" src="images/banner-2a-background.webp" alt="Курица с цыплятами на алтайском лугу на фоне гор и деревянного дома" fetchpriority="high">
+    <div class="hero-birds-content">
+     <h2>Забота о птице<br>начинается с питания</h2>
+     <div class="hero-birds-rule" aria-hidden="true"><span>❧</span></div>
+     <p>Кормовые добавки, витамины и минералы<br>для кур, уток, гусей и другой домашней птицы</p>
+     <a class="hero-birds-button" href="#catalog" data-catlink="feed">Кормовые добавки <span aria-hidden="true">›</span></a>
+    </div>
+   </div>
+   <!-- Баннер 2Б: утверждённое PNG без дополнительного текста поверх изображения. -->
+   <div class="hero-slide hero-slide-artwork" data-hero-slide="1" role="group" aria-roledescription="слайд" aria-label="2 из 5" aria-hidden="true" inert>
+    <a class="hero-artwork-link" href="#catalog" data-catlink="feed" aria-label="Товары для молодняка: перейти в каталог">
+     <img class="hero-artwork-image" src="images/banner-2b-final.webp" alt="Телёнок, козлёнок и ягнёнок. Большая забота о маленьких. Товары для молодняка." loading="lazy" width="2172" height="360">
+    </a>
+    <div class="hero-artwork-mobile">
+     <h2>Большая забота<br>о маленьких</h2>
+     <p>Кормовые добавки и товары для ухода за телятами, козлятами и ягнятами.</p>
+     <a class="hero-artwork-mobile-cta" href="#catalog" data-catlink="feed">Товары для молодняка <span aria-hidden="true">›</span></a>
+    </div>
+   </div>
+   <!-- Баннер 3А: утверждённое PNG без дополнительного текста поверх изображения. -->
+   <div class="hero-slide hero-slide-artwork" data-hero-slide="2" role="group" aria-roledescription="слайд" aria-label="3 из 5" aria-hidden="true" inert>
+    <a class="hero-artwork-link" href="#catalog" data-catlink="protection" aria-label="Защита от вредителей: перейти в каталог">
+     <img class="hero-artwork-image" src="images/banner-3a-final.webp" alt="Мешки зерна и фермерский амбар. Хозяйство без непрошеных гостей. Защита от вредителей." loading="lazy" width="2172" height="360">
+    </a>
+    <div class="hero-artwork-mobile">
+     <h2>Хозяйство без<br>непрошеных гостей</h2>
+     <p>Средства от мышей, крыс и других вредителей для дома, фермы и построек.</p>
+     <a class="hero-artwork-mobile-cta" href="#catalog" data-catlink="protection">Защита от вредителей <span aria-hidden="true">›</span></a>
+    </div>
+   </div>
+   <!-- Баннер 3Б: утверждённое PNG без дополнительного текста поверх изображения. -->
+   <div class="hero-slide hero-slide-artwork" data-hero-slide="3" role="group" aria-roledescription="слайд" aria-label="4 из 5" aria-hidden="true" inert>
+    <a class="hero-artwork-link" href="#catalog" data-catlink="all" aria-label="Товары для фермы: перейти в каталог">
+     <img class="hero-artwork-image" src="images/banner-3b-final.webp" alt="Кот, бидон и алтайский амбар. Чтобы каждое дело в хозяйстве было в радость. Товары для фермы." loading="lazy" width="2172" height="360">
+    </a>
+    <div class="hero-artwork-mobile">
+     <h2>Чтобы каждое дело<br>в хозяйстве было в радость</h2>
+     <p>Практичные товары для ежедневных забот, ухода за животными и ведения хозяйства.</p>
+     <a class="hero-artwork-mobile-cta" href="#catalog" data-catlink="all">Товары для фермы <span aria-hidden="true">›</span></a>
+    </div>
+   </div>
+   <!-- Последний баннер: ранее утверждённая композиция с коровой и телёнком, без изменений изображений и текста. -->
+   <div class="hero-slide" data-hero-slide="4" role="group" aria-roledescription="слайд" aria-label="5 из 5" aria-hidden="true" inert>
+    <img class="hero-preview" src="images/altai-banner.jpg" alt="Корова с телёнком на алтайском лугу. Забота о животных — основа успешного хозяйства.">
+    <a class="hero-coverlink" href="#catalog" aria-label="Перейти в каталог товаров"></a>
+    <div class="hero-mobile"><div class="hero-mobile-inner"><span class="micro-title">ЗОЛОТОЙ ТЕЛЕНОК АЛТАЯ</span><h1>Забота о животных —<br>основа успешного хозяйства</h1><p>Кормовые добавки, средства ухода и товары для личного подворья</p><a href="#catalog" class="gold-btn">Перейти в каталог <span>›</span></a></div></div>
+   </div>
+  </div>
+  <button type="button" class="hero-arrow hero-arrow-prev" id="heroPrevious" aria-label="Предыдущий баннер">‹</button>
+  <button type="button" class="hero-arrow hero-arrow-next" id="heroNext" aria-label="Следующий баннер">›</button>
+  <div class="hero-pagination" id="heroPagination" role="group" aria-label="Выбрать баннер">
+   <button type="button" class="hero-dot is-active" data-hero-dot="0" aria-label="Баннер 1 — 2А: забота о птице" aria-current="true"></button>
+   <button type="button" class="hero-dot" data-hero-dot="1" aria-label="Баннер 2 — 2Б: товары для молодняка"></button>
+   <button type="button" class="hero-dot" data-hero-dot="2" aria-label="Баннер 3 — 3А: защита от вредителей"></button>
+   <button type="button" class="hero-dot" data-hero-dot="3" aria-label="Баннер 4 — 3Б: товары для фермы"></button>
+   <button type="button" class="hero-dot" data-hero-dot="4" aria-label="Баннер 5 — забота о животных"></button>
+  </div>
+ </section>
+ <section class="categories container" aria-label="Популярные категории">
+  <a href="#catalog" class="category-card" data-catlink="care"><img src="images/cat-animals.webp" alt=""><span>Средства по уходу<br>за животными</span><span class="cat-arrow">›</span></a>
+  <a href="#catalog" class="category-card" data-catlink="feed"><img src="images/cat-feeds.webp" alt=""><span>Кормовые<br>добавки</span><span class="cat-arrow">›</span></a>
+  <a href="#catalog" class="category-card" data-catlink="all"><img src="images/cat-farm.webp" alt=""><span>Товары для фермы<br>и хозяйства</span><span class="cat-arrow">›</span></a>
+  <a href="#catalog" class="category-card" data-catlink="protection"><img src="images/cat-protection.webp" alt=""><span>Средства от грызунов<br>и вредителей</span><span class="cat-arrow">›</span></a>
+ </section>
+ <section class="catalog container" id="catalog">
+  <div class="section-head"><div><span class="section-label">НАШ АССОРТИМЕНТ</span><h2>Хиты продаж <span class="wheat">❧</span></h2></div><a href="#catalog" class="all-products" id="showAllLink">Смотреть все товары ›</a></div>
+  <div class="filters" id="filters" role="group" aria-label="Фильтр каталога"><button class="filter active" data-category="all">Все товары</button><button class="filter" data-category="care">Уход за животными</button><button class="filter" data-category="feed">Кормовые добавки</button><button class="filter" data-category="protection">Защита от вредителей</button><span class="count-results" id="catalogCount">18 товаров</span></div>
+  <div class="product-grid" id="productGrid" aria-live="polite"></div>
+  <div class="no-results" id="emptyState" hidden><h3>Товары не найдены</h3><p>Попробуйте другое слово или выберите все категории.</p><button class="dark-btn" id="clearFilters">Показать все товары</button></div>
+  <p class="price-note-global">* На этой версии сайта все цены указаны для примера. Наличие, реальные цены и доставка ещё не настроены. Кнопки Ozon работают у товаров, для которых добавлены точные ссылки. Для остальных ссылки появятся позже.</p>
+ </section>
+ <section class="reviews container" id="reviews" aria-label="Отзывы покупателей">
+  <div class="section-head"><div><span class="section-label">ОТЗЫВЫ ПОКУПАТЕЛЕЙ</span><h2>Нас выбирают фермеры и хозяева подворий</h2></div></div>
+  <div class="reviews-layout">
+   <aside class="reviews-summary" aria-label="Итоги отзывов на Ozon">
+    <div class="reviews-score"><strong id="reviewsRating">4,9</strong><span aria-hidden="true">★★★★★</span></div>
+    <div class="reviews-count" id="reviewsCount"></div>
+    <ul class="reviews-facts"><li><b id="reviewsOrders"></b> заказов</li><li>Магазин со значком <b>Premium</b></li></ul>
+    <a class="reviews-shop-link" id="reviewsShopLink" href="#" target="_blank" rel="noopener noreferrer">Все отзывы на Ozon ↗</a>
+   </aside>
+   <div class="reviews-feed-wrap">
+    <button type="button" class="reviews-arrow prev" id="reviewsPrev" aria-label="Предыдущие отзывы">‹</button>
+    <div class="reviews-feed" id="reviewsFeed" tabindex="0" role="group" aria-label="Отзывы покупателей"></div>
+    <button type="button" class="reviews-arrow next" id="reviewsNext" aria-label="Следующие отзывы">›</button>
+   </div>
+  </div>
+  <p class="reviews-note">Оценка и число отзывов — по данным магазина на Ozon на <span id="reviewsAsOf"></span>.</p>
+ </section>
+ <section class="advantages container" aria-label="Преимущества магазина">
+  <div><svg viewBox="0 0 48 48"><path d="M3 15h26v18H3zM29 21h8l8 9v3H29M9 36a4 4 0 1 0 8 0 M31 36a4 4 0 1 0 8 0"/></svg><span><strong>Доставка по России</strong><small>Настроим при запуске</small></span></div>
+  <div><svg viewBox="0 0 48 48"><path d="M24 4 8 11v13c0 11 6 17 16 20 10-3 16-9 16-20V11zM16 24l6 6 11-12"/></svg><span><strong>Оригинальные товары</strong><small>Наши фотографии упаковок</small></span></div>
+  <div><svg viewBox="0 0 48 48"><path d="M42 8C18 8 6 18 8 34c11 12 33-2 34-26ZM10 39c6-10 13-16 24-22"/></svg><span><strong>Для вашего хозяйства</strong><small>Удобный выбор по категориям</small></span></div>
+  <div><svg viewBox="0 0 48 48"><path d="M8 16c0-4 7-7 16-7s16 3 16 7-7 7-16 7S8 20 8 16ZM8 16v9c0 4 7 7 16 7s16-3 16-7v-9M8 25v8c0 4 7 7 16 7s16-3 16-7v-8"/></svg><span><strong>Два способа покупки</strong><small>Наш сайт и Ozon</small></span></div>
+ </section>
+ <section class="guide container" id="how-to-buy"><div class="section-head"><div><span class="section-label">ПОКУПКА БЕЗ ЛИШНИХ СЛОЖНОСТЕЙ</span><h2>Выберите удобный способ</h2></div></div><div class="purchase-options"><article><span class="option-counter">01</span><h3>На нашем сайте</h3><p>Добавляйте товары в корзину и проверьте оформление заказа. Перед запуском подключим оплату, доставку и обработку заявок.</p><a href="#catalog">Перейти в каталог →</a></article><article><span class="option-counter">02</span><h3>На Ozon</h3><p>В каждой карточке товара предусмотрена отдельная кнопка. После добавления точных ссылок она будет вести на соответствующий товар на Ozon.</p><a href="#catalog">Посмотреть товары →</a></article></div></section>
+ <section class="about container" id="about"><div><span class="section-label">О МАГАЗИНЕ</span><h2>С заботой о животных.<br>С любовью к Алтаю.</h2><p>«Золотой теленок Алтая» — магазин товаров для ухода за животными, кормовых добавок и фермерского хозяйства. Мы создаём понятный каталог, в котором каждый товар удобно рассмотреть и выбрать.</p></div><span class="about-mountains" aria-hidden="true">⌁ ⛰ ⌁</span></section>
+</main>
+<footer class="footer" id="footer"><div class="container footer-cols"><div class="footer-brand"><div class="footer-name">Золотой теленок<br><span>Алтая</span></div><p>Товары для животных<br>и фермерского хозяйства</p></div><div><h3>Каталог товаров</h3><a href="#catalog">Средства ухода</a><a href="#catalog">Кормовые добавки</a><a href="#catalog">Товары для хозяйства</a><a href="#catalog">Средства от вредителей</a></div><div><h3>Покупателям</h3><a href="#how-to-buy">Доставка и оплата</a><a href="#how-to-buy">Как оформить заказ</a><a href="#catalog">Товары</a><span>Реквизиты — перед запуском</span></div><div><h3>О компании</h3><a href="#about">О магазине</a><a href="#footer">Контакты</a><span>Телефон и почта — при запуске</span></div></div><div class="container footer-bottom"><span>© 2026 «Золотой теленок Алтая» · демонстрационная версия</span><span>Оплата и отправка заказов отключены</span></div></footer>
+<div class="scrim" id="scrim" hidden></div>
+<aside class="cart-drawer" id="cartDrawer" role="dialog" aria-modal="true" aria-label="Корзина" aria-hidden="true"><div class="drawer-header"><div><small>ВАШ ВЫБОР</small><h2>Корзина <span id="drawerCount">0</span></h2></div><button id="closeCart" class="close-btn" aria-label="Закрыть корзину">×</button></div><div id="cartItems" class="cart-items"></div><div class="drawer-footer"><div class="cart-total"><span>Итого (тестовые цены)</span><strong id="cartTotal">0 ₽</strong></div><button class="dark-btn full" id="checkoutBtn">Оформить заказ →</button><p>Демонстрация: оплата и отправка заказа отключены.</p></div></aside>
+<div class="modal-overlay" id="checkoutModal" role="dialog" aria-modal="true" aria-labelledby="checkoutTitle" aria-hidden="true"><div class="modal checkout"><button class="close-btn corner-close" id="closeCheckout" aria-label="Закрыть">×</button><small class="section-label">ДЕМОНСТРАЦИЯ</small><h2 id="checkoutTitle">Оформление заказа</h2><p class="form-notice">Для проверки интерфейса можно заполнить форму вымышленными данными. Они не отправляются продавцу и не используются для оплаты.</p><div class="order-preview" id="orderPreview"></div><form id="checkoutForm"><label>Имя<input type="text" placeholder="Например, Анна" required></label><label>Телефон<input type="tel" placeholder="+7 999 000-00-00" required></label><label>Город доставки<input type="text" placeholder="Например, Барнаул" required></label><label>Способ связи<select><option>По телефону</option><option>Сообщением</option></select></label><button type="submit" class="dark-btn full">Проверить оформление</button></form><div id="checkoutSuccess" hidden class="success-box"><span>✓</span><h3>Проверка пройдена!</h3><p>Это только демонстрация. Заказ никуда не отправлен, оплата не производилась.</p><button id="successClose" class="dark-btn">Вернуться в магазин</button></div></div></div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body></html>

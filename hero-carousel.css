@@ -1,0 +1,89 @@
+/* Пять утверждённых баннеров: оригиналы изображений сохранены. */
+.hero.hero-carousel{position:relative;width:min(1448px,100%);aspect-ratio:1448 / 242;margin-inline:auto;isolation:isolate;overflow:hidden;background:#f2ebd8}
+.hero-carousel .hero-slides{position:absolute;inset:0}
+.hero-carousel .hero-slide{position:absolute;inset:0;visibility:hidden;opacity:0;pointer-events:none;transition:opacity .6s ease,visibility .6s ease}
+.hero-carousel .hero-slide.is-active{visibility:visible;opacity:1;pointer-events:auto;z-index:1}
+.hero-carousel .hero-preview{display:block;width:100%;height:100%;object-fit:cover}
+.hero-carousel .hero-coverlink{z-index:2}
+.hero-carousel .hero-second-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center}
+.hero-carousel .hero-birds-content{position:absolute;z-index:2;left:50%;top:48%;transform:translate(-50%,-50%);width:62%;text-align:center}
+.hero-carousel .hero-birds-content h2{margin:0;color:#2d451c;font-size:clamp(21px,2.8vw,43px);font-weight:700;line-height:1.04;text-shadow:0 1px 2px #fff9ed9a}
+.hero-carousel .hero-birds-rule{display:flex;align-items:center;gap:8px;width:min(46%,470px);margin:8px auto 5px;color:#b8841b}
+.hero-carousel .hero-birds-rule::before,.hero-carousel .hero-birds-rule::after{content:"";height:2px;flex:1;background:#b8841b}
+.hero-carousel .hero-birds-rule span{font-size:16px;line-height:1}
+.hero-carousel .hero-birds-content p{margin:0 auto 11px;max-width:750px;font-size:clamp(11px,1.25vw,18px);line-height:1.22;color:#21231c}
+.hero-carousel .hero-birds-button{display:inline-flex;align-items:center;gap:12px;padding:9px 24px;color:#fff;font-weight:700;font-size:clamp(12px,1.32vw,19px);background:linear-gradient(#d7a52f,#a86d08);border-radius:999px;border:1px solid #f8d57d;box-shadow:0 3px 9px rgba(52,35,13,.24)}
+.hero-carousel .hero-birds-button:hover{background:linear-gradient(#e7b53a,#af7811)}
+.hero-carousel .hero-arrow{position:absolute;z-index:5;top:55%;display:grid;place-items:center;width:clamp(27px,2.8vw,40px);height:clamp(27px,2.8vw,40px);transform:translateY(-50%);padding:0;border:0;border-radius:50%;background:#fffaf0f2;color:#4d5335;box-shadow:0 1px 4px #3f411a38;font:31px/1 Georgia,serif;transition:background .2s,transform .2s}
+.hero-carousel .hero-arrow:hover{background:#fff;transform:translateY(-50%) scale(1.08)}
+.hero-carousel .hero-arrow-prev{left:2.2%}.hero-carousel .hero-arrow-next{right:2.2%}
+.hero-carousel .hero-pagination{position:absolute;z-index:6;left:50%;bottom:1px;transform:translateX(-50%);display:flex;align-items:center;justify-content:center;gap:7px;min-width:135px;min-height:17px;padding:3px 12px;border-radius:20px 20px 0 0;background:rgba(255,250,238,.89);backdrop-filter:blur(6px)}
+.hero-carousel .hero-dot{display:block;width:10px;height:10px;flex:0 0 10px;padding:0;border:1.5px solid #55703b;border-radius:50%;background:#fffdf6;transition:transform .18s,background .18s}
+.hero-carousel .hero-dot.is-active{background:#315b27;border-color:#315b27;transform:scale(1.15)}
+.hero-carousel .hero-dot:not(:disabled):hover{transform:scale(1.3);background:#ebc36b}
+.hero-carousel .hero-dot.is-pending{border-color:#b0a78a;background:#e4dfd0;cursor:not-allowed;opacity:.72}
+@media(max-width:850px){
+ .hero.hero-carousel{width:100%;height:420px;aspect-ratio:auto}
+ .hero-carousel .hero-preview{display:none}
+ .hero-carousel .hero-mobile{display:flex;align-items:center;justify-content:center;height:100%;min-height:0;padding:43px 47px 45px}
+ .hero-carousel .hero-mobile-inner{width:100%}
+ .hero-carousel .hero-coverlink{display:none}
+ .hero-carousel .hero-arrow{top:48%;width:34px;height:34px;font-size:29px}
+ .hero-carousel .hero-arrow-prev{left:10px}.hero-carousel .hero-arrow-next{right:10px}
+ .hero-carousel .hero-pagination{bottom:8px;padding:6px 14px;border-radius:30px}
+ .hero-carousel .hero-dot{width:11px;height:11px;flex-basis:11px}
+ .hero-carousel .hero-second-photo{object-position:24% center}
+ .hero-carousel .hero-birds-content{top:auto;left:50%;bottom:44px;transform:translateX(-50%);width:calc(100% - 56px);padding:13px 12px 16px;border-radius:14px;background:rgba(255,250,237,.94);box-shadow:0 8px 22px #323e2830}
+ .hero-carousel .hero-birds-content h2{font-size:clamp(23px,4.6vw,32px)}
+ .hero-carousel .hero-birds-rule{margin:8px auto}
+ .hero-carousel .hero-birds-content p{font-size:15px;margin-bottom:12px}
+ .hero-carousel .hero-birds-button{font-size:15px;padding:9px 20px}
+}
+@media(max-width:560px){
+ .hero.hero-carousel{height:420px}
+ .hero-carousel .hero-mobile{padding:48px 37px 45px}
+ .hero-carousel .hero-birds-content{width:calc(100% - 36px);bottom:46px;padding:14px 12px 16px}
+ .hero-carousel .hero-birds-content h2{font-size:clamp(23px,6.2vw,30px)}
+ .hero-carousel .hero-birds-content p{font-size:14px}
+ .hero-carousel .hero-arrow{top:38%;width:32px;height:32px;font-size:27px}
+ .hero-carousel .hero-arrow-prev{left:7px}.hero-carousel .hero-arrow-next{right:7px}
+}
+@media(prefers-reduced-motion:reduce){.hero-carousel .hero-slide{transition:none}.hero-carousel .hero-arrow,.hero-carousel .hero-dot{transition:none}}
+
+/* Баннерам 2Б, 3А, 3Б не требуются HTML-надписи поверх готового PNG. */
+.hero-carousel .hero-slide-artwork{background:#f5f0e2}
+.hero-carousel .hero-artwork-link{position:absolute;inset:0;display:block;width:100%;height:100%}
+.hero-carousel .hero-artwork-image{display:block;width:100%;height:100%;object-fit:contain;object-position:center}
+.hero-carousel .hero-artwork-mobile{display:none}
+@media(max-width:850px){
+ /* На небольших экранах панорамы показаны целиком, без обрезки.
+    Заголовок вынесен ПОД изображение, а не дублируется поверх него. */
+ .hero-carousel .hero-slide-artwork{display:flex;flex-direction:column;align-items:stretch}
+ .hero-carousel .hero-artwork-link{position:relative;inset:auto;width:100%;height:auto;flex:0 0 auto}
+ .hero-carousel .hero-artwork-image{width:100%;height:auto;aspect-ratio:2172/360;object-fit:contain}
+ .hero-carousel .hero-artwork-mobile{display:flex;flex:1;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:13px;padding:12px 52px 42px;background:linear-gradient(155deg,#faf5e9,#f0ead6)}
+ .hero-carousel .hero-artwork-mobile h2{font-size:clamp(24px,4.1vw,34px);line-height:1.08;color:#28451f;margin:0}
+ .hero-carousel .hero-artwork-mobile p{font:clamp(13px,1.9vw,17px)/1.45 Arial,sans-serif;color:#374232;max-width:520px;margin:0}
+ .hero-carousel .hero-artwork-mobile-cta{display:inline-flex;align-items:center;justify-content:center;gap:14px;color:white;background:linear-gradient(#d7a52f,#a86d08);border:1px solid #f8d57d;box-shadow:0 3px 9px #34230d3d;border-radius:999px;padding:11px 20px;font-size:15px;font-weight:bold}
+ /* Ранее размещённый фон 2А также сохраняет панорамные пропорции. */
+ .hero-carousel .hero-slide-birds{display:flex;flex-direction:column;background:#f8f1e2}
+ .hero-carousel .hero-second-photo{position:relative;inset:auto;width:100%;height:auto;aspect-ratio:2048/339;object-fit:contain;object-position:center;flex:0 0 auto}
+ .hero-carousel .hero-birds-content{position:relative;top:auto;bottom:auto;left:auto;transform:none;width:calc(100% - 66px);margin:auto;padding:14px 14px 20px;box-sizing:border-box}
+}
+@media(max-width:560px){
+ .hero-carousel .hero-artwork-mobile{padding:12px 41px 38px;gap:10px}
+ .hero-carousel .hero-artwork-mobile h2{font-size:clamp(21px,5.8vw,28px)}
+ .hero-carousel .hero-artwork-mobile p{font-size:13px;line-height:1.35}
+ .hero-carousel .hero-artwork-mobile-cta{font-size:13px;padding:10px 14px}
+ .hero-carousel .hero-birds-content{width:calc(100% - 72px);padding:13px 10px 17px}
+ .hero-carousel .hero-birds-content h2{font-size:clamp(23px,5.6vw,27px)}
+}
+
+/* Единое место текста на компьютере: центр текстового блока каждого баннера — на 50% ширины.
+   У 2Б, 3А, 3Б текст нарисован в самой картинке, поэтому картинки слегка сдвинуты и увеличены,
+   чтобы по краям не появлялись полосы. */
+@media(min-width:851px){
+ .hero-carousel [data-hero-slide="1"] .hero-artwork-image{transform:translateX(-1.9%) scale(1.045)}
+ .hero-carousel [data-hero-slide="2"] .hero-artwork-image{transform:translateX(.2%) scale(1.01)}
+ .hero-carousel [data-hero-slide="3"] .hero-artwork-image{transform:translateX(-.5%) scale(1.015)}
+}

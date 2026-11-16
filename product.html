@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#123b28">
+<meta name="description" content="Страница товара магазина «Золотой теленок Алтая»: фотографии, информация, покупка на сайте или Ozon.">
+<title>Товар — Золотой теленок Алтая</title>
+<link rel="icon" href="images/brand-symbol.png">
+<link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="product.css"><link rel="stylesheet" href="reviews.css">
+<script defer src="products.js"></script><script defer src="reviews.js"></script><script defer src="product-page.js"></script>
+</head>
+<body>
+<div class="demo-bar"><span class="demo-indicator"></span><b>Макет магазина</b><span class="separator">·</span> Цены демонстрационные, заказы и платежи пока не принимаются</div>
+<header class="site-header" id="top">
+ <div class="header-top container">
+  <a class="identity" href="index.html#top" aria-label="Золотой теленок Алтая — на главную"><img src="images/brand-symbol.png" alt="" width="102" height="60"><span class="brand-words"><strong>Золотой теленок</strong><strong class="brand-bottom">Алтая<span class="golden-stroke"></span></strong></span></a>
+  <div class="brand-tagline">ТОВАРЫ ДЛЯ ЗДОРОВЬЯ<br>ЖИВОТНЫХ И УСПЕШНОГО<br>ХОЗЯЙСТВА <svg class="mountains" viewBox="0 0 125 50" aria-hidden="true"><path d="M2 44 30 29 43 37 67 9 88 29 100 23 122 43 M39 37 51 25 M64 13 72 23 M85 28 90 37"/></svg></div>
+  <div class="head-meta"><span class="meta-icon">♧</span><span>Алтайский характер<br><small>в каждом товаре</small></span></div>
+  <div class="head-meta"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3 4 5c-1 9 8 18 16 15l2-3-6-4-3 3c-3-2-6-5-7-8l3-3-2-2z"/></svg><span>Для всей России<br><small>Доставка — при запуске</small></span></div>
+  <div class="head-actions"><button id="mobileMenuToggle" class="menu-toggle" aria-label="Открыть меню" aria-expanded="false">☰</button><button class="cart-top" id="openCart" aria-label="Открыть корзину"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h3l2 12h12l3-9H6M9 21h.01M18 21h.01"/></svg><span>Корзина</span><b id="cartCount">0</b></button></div>
+ </div>
+ <nav class="navline" aria-label="Навигация по сайту"><div class="nav-inner container"><a class="catalog-link" href="index.html#catalog"><span>☰</span> Каталог товаров <span>⌄</span></a><div class="nav-links" id="mobileNav"><a href="index.html#about">О магазине</a><a href="index.html#how-to-buy">Доставка и оплата</a><a href="index.html#reviews">Отзывы</a><a href="index.html#footer">Контакты</a></div><label class="nav-search"><input id="catalogSearch" type="search" placeholder="Поиск по товарам и названиям..." aria-label="Поиск товаров"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="m15 15 6 6"/></svg></label></div></nav>
+</header>
+<main class="item-main container" id="productPage">
+  <nav class="breadcrumbs" aria-label="Навигационная цепочка"><a href="index.html">Главная</a><span>›</span><a href="index.html#catalog">Каталог</a><span>›</span><span id="crumbName">Товар</span></nav>
+  <div class="item-columns">
+   <section class="gallery-column" aria-label="Фотографии товара">
+    <div class="gallery-heading"><span class="section-label">ФОТОГРАФИИ ТОВАРА</span></div>
+    <div class="gallery-stage" id="galleryStage">
+      <button class="gallery-stage-photo" id="zoomPhoto" aria-label="Увеличить фотографию"><img id="mainProductPhoto" src="" alt=""></button>
+      <button class="stage-nav prev" id="galleryPrev" aria-label="Предыдущее фото">‹</button>
+      <button class="stage-nav next" id="galleryNext" aria-label="Следующее фото">›</button>
+    </div>
+    <div class="thumbs-area">
+     <button id="thumbPrev" class="thumb-scroll" aria-label="Прокрутить фотографии влево">‹</button>
+     <div id="thumbnailTrack" class="thumbnail-track" role="group" aria-label="Горизонтальная лента фотографий"></div>
+     <button id="thumbNext" class="thumb-scroll" aria-label="Прокрутить фотографии вправо">›</button>
+    </div>
+   </section>
+   <section class="purchase-column" aria-label="Информация о товаре и покупка">
+    <span class="section-label" id="itemCategory">ЗАЩИТА ХОЗЯЙСТВА</span>
+    <h1 id="itemTitle">Ратобор, тесто-брикет, 200 г</h1>
+    <div class="title-detail"><span class="gold-line"></span><span id="itemSubtitle">Средства от грызунов и вредителей</span></div>
+    <div class="item-tags" id="itemTags"><span>Масса 200 г</span><span>Тесто-брикет</span></div>
+    <a class="product-rating" id="productRating" href="#" target="_blank" rel="noopener noreferrer" hidden></a>
+    <p class="item-description" id="itemDescription"></p>
+    <section class="related-creams" id="relatedCreams" aria-label="Другие зоокосметические кремы" hidden>
+      <div class="related-creams-heading"><span class="section-label">КРЕМЫ ДЛЯ УХОДА</span><h2>Другие кремы серии</h2><p>Выберите крем, чтобы открыть его страницу.</p></div>
+      <div class="related-creams-grid" id="relatedCreamsGrid"></div>
+    </section>
+    <section class="related-rodenticides" id="relatedRodenticides" aria-label="Другие средства от грызунов" hidden>
+      <div class="related-rodenticides-heading"><span class="section-label">СРЕДСТВА ОТ ГРЫЗУНОВ</span><h2>Другие товары серии</h2><p>Перейдите к другой форме приманки, чтобы посмотреть фотографии и описание.</p></div>
+      <div class="related-rodenticides-grid" id="relatedRodenticidesGrid"></div>
+    </section>
+    <section class="related-rodenticides" id="relatedVaselin" aria-label="Другие виды вазелина" hidden>
+      <div class="related-rodenticides-heading"><span class="section-label">СРЕДСТВА УХОДА</span><h2>Другие виды вазелина</h2><p>Перейдите на страницу другого вазелина, чтобы посмотреть фотографии и описание.</p></div>
+      <div class="related-rodenticides-grid" id="relatedVaselinGrid"></div>
+    </section>
+    <section class="related-rodenticides" id="relatedPremix" aria-label="Премиксы, которые применяют вместе" hidden>
+      <div class="related-rodenticides-heading"><span class="section-label">«СКОРАЯ КОРМОВАЯ ПОМОЩЬ»</span><h2>Применяйте вместе</h2><p>Эти премиксы можно использовать вместе. Откройте страницу второго, чтобы посмотреть фотографии и описание.</p></div>
+      <div class="related-rodenticides-grid" id="relatedPremixGrid"></div>
+    </section>
+    <section class="related-skeletin" id="relatedSkeletin" aria-label="Другие виды Скелетина" hidden>
+      <div class="related-skeletin-heading"><span class="section-label">СЕРИЯ «СКЕЛЕТИН»</span><h2>Другие виды Скелетина</h2><p>Выберите другой состав, чтобы открыть его страницу и посмотреть фотографии.</p></div>
+      <div class="related-skeletin-grid" id="relatedSkeletinGrid"></div>
+    </section>
+    <div class="purchase-panel">
+      <div class="purchase-kicker">СТОИМОСТЬ НА САЙТЕ</div>
+      <div class="purchase-cost"><strong id="itemPrice">— ₽</strong><span class="fake-price-tag">Демонстрационная цена</span></div>
+      <div class="buy-mode" id="buyMode" hidden role="group" aria-label="Способ покупки"><button type="button" class="mode-btn active" data-mode="piece" aria-pressed="true">Штуками</button><button type="button" class="mode-btn" data-mode="box" aria-pressed="false">Коробкой <span id="boxQtyLabel"></span></button></div>
+      <p class="box-note" id="boxNote" hidden></p>
+      <div class="buy-quantity"><label for="qtyInput" id="qtyLabel">Количество</label><div class="quantity-stepper"><button id="qtyMinus" aria-label="Уменьшить количество">−</button><input id="qtyInput" inputmode="numeric" type="number" min="1" max="99" value="1" aria-label="Количество товара"><button id="qtyPlus" aria-label="Увеличить количество">+</button></div></div>
+      <button id="buyOnSite" class="site-purchase-btn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h3l2 12h12l3-9H6M9 21h.01M18 21h.01"/></svg> Добавить в корзину</button>
+      <a id="buyOzon" class="ozon-purchase-btn" href="#" target="_blank" rel="noopener noreferrer"><span>Купить на <strong>Ozon</strong></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></a>
+      <p class="purchase-disclaimer">Приём заказов и оплата на сайте пока отключены. Товар появится в корзине, которую можно открыть по значку вверху страницы.</p>
+    </div>
+    <div class="safety-copy" id="safetyText" hidden><span aria-hidden="true">ⓘ</span><p>Перед использованием средства от грызунов внимательно изучите инструкцию и меры предосторожности на упаковке. Берегите от детей и домашних животных.</p></div>
+    <a class="back-catalog" href="index.html#catalog">← Вернуться к каталогу товаров</a>
+   </section>
+  </div>
+  <section class="specs-section" id="specifications" aria-label="Характеристики товара">
+   <div class="specs-title-row"><div><span class="section-label">О ТОВАРЕ</span><h2>Характеристики товара</h2></div><span class="spec-draft-chip">Раздел в разработке</span></div>
+   <div class="specs-panels"><div class="specs-main-card"><h3>Основные характеристики</h3><p>Здесь разместим подробные сведения о товаре в удобной таблице.</p><div class="spec-mock-row"><span>Назначение</span><i></i></div><div class="spec-mock-row"><span>Состав</span><i></i></div><div class="spec-mock-row"><span>Форма выпуска</span><i></i></div><div class="spec-mock-row"><span>Условия хранения</span><i></i></div></div><div class="specs-side-card"><span class="decor-icon" aria-hidden="true">✧</span><h3>Инструкция и описание</h3><p>Оставили отдельное место для подробного описания, инструкции, рекомендаций и важной информации от производителя.</p><span class="coming-soon">Скоро добавим оформление</span></div></div>
+  </section>
+  <section class="back-to-catalog-bottom"><p>Посмотрите другие товары для фермы и хозяйства</p><a href="index.html#catalog">← Весь каталог</a></section>
+</main>
+<footer class="footer" id="footer"><div class="container footer-cols"><div class="footer-brand"><div class="footer-name">Золотой теленок<br><span>Алтая</span></div><p>Товары для животных<br>и фермерского хозяйства</p></div><div><h3>Каталог товаров</h3><a href="index.html#catalog">Средства ухода</a><a href="index.html#catalog">Кормовые добавки</a><a href="index.html#catalog">Товары для хозяйства</a><a href="index.html#catalog">Средства от вредителей</a></div><div><h3>Покупателям</h3><a href="index.html#how-to-buy">Доставка и оплата</a><a href="index.html#how-to-buy">Как оформить заказ</a><a href="index.html#catalog">Товары</a><span>Реквизиты — перед запуском</span></div><div><h3>О компании</h3><a href="index.html#about">О магазине</a><a href="index.html#footer">Контакты</a><span>Телефон и почта — при запуске</span></div></div><div class="container footer-bottom"><span>© 2026 «Золотой теленок Алтая» · демонстрационная версия</span><span>Оплата и отправка заказов отключены</span></div></footer>
+<div id="photoLightbox" class="photo-lightbox" role="dialog" aria-modal="true" aria-label="Просмотр увеличенной фотографии" aria-hidden="true"><button id="lightboxClose" class="photo-lightbox-close" aria-label="Закрыть просмотр">×</button><button id="lightboxPrev" class="photo-lightbox-arrow left" aria-label="Предыдущее фото">‹</button><img id="lightboxPhoto" src="" alt=""><button id="lightboxNext" class="photo-lightbox-arrow right" aria-label="Следующее фото">›</button></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body></html>
