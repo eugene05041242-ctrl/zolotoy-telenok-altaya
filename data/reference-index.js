@@ -1,0 +1,2 @@
+/* Создаётся автоматически. Не редактируйте — запускайте node build.mjs */
+window.__referenceIndex = ["chamomile","fir-cream-200","gremuchaya-smes-200","iodine-cream-200","krysinaya-smert-1-200","milka-krem-250","oksinorm-f-500","ratobor","ratobor-grain-250","seabuckthorn-cream-200","skeletin-birds-1kg","skeletin-phosphorus-1kg","skeletin-sulfur-1kg","sulfur","sustavet-500","vaselin-spaz-farm-200"];

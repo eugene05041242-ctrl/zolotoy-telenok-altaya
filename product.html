@@ -6,8 +6,8 @@
 <meta name="description" content="Страница товара магазина «Золотой теленок Алтая»: фотографии, информация, покупка на сайте или Ozon.">
 <title>Товар — Золотой теленок Алтая</title>
 <link rel="icon" href="images/brand-symbol.png">
-<link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="pages.css"><link rel="stylesheet" href="product.css"><link rel="stylesheet" href="reviews.css">
-<script defer src="products.js"></script><script defer src="reviews.js"></script><script defer src="product-page.js"></script>
+<link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="pages.css"><link rel="stylesheet" href="product.css"><link rel="stylesheet" href="reference.css"><link rel="stylesheet" href="reviews.css">
+<script defer src="products.js"></script><script defer src="reviews.js"></script><script defer src="product-page.js"></script><script defer src="data/reference-index.js"></script><script defer src="product-reference.js"></script>
 </head>
 <body>
 <!--#header-->
@@ -80,9 +80,10 @@
     <a class="back-catalog" href="index.html#catalog">← Вернуться к каталогу товаров</a>
    </section>
   </div>
-  <section class="specs-section" id="specifications" aria-label="Характеристики товара">
-   <div class="specs-title-row"><div><span class="section-label">О ТОВАРЕ</span><h2>Характеристики товара</h2></div><span class="spec-draft-chip">Раздел в разработке</span></div>
-   <div class="specs-panels"><div class="specs-main-card"><h3>Основные характеристики</h3><p>Здесь разместим подробные сведения о товаре в удобной таблице.</p><div class="spec-mock-row"><span>Назначение</span><i></i></div><div class="spec-mock-row"><span>Состав</span><i></i></div><div class="spec-mock-row"><span>Форма выпуска</span><i></i></div><div class="spec-mock-row"><span>Условия хранения</span><i></i></div></div><div class="specs-side-card"><span class="decor-icon" aria-hidden="true">✧</span><h3>Инструкция и описание</h3><p>Оставили отдельное место для подробного описания, инструкции, рекомендаций и важной информации от производителя.</p><span class="coming-soon">Скоро добавим оформление</span></div></div>
+  <section class="reference" id="reference" aria-label="Справочник по товару" hidden>
+   <div class="reference-title-row"><div><span class="section-label">СПРАВОЧНИК</span><h2>Всё о товаре</h2></div><span class="reference-hint">Данные по этикетке производителя</span></div>
+   <div class="reference-tabs" role="tablist" id="referenceTabs" aria-label="Разделы справочника"></div>
+   <div id="referencePanels"></div>
   </section>
   <section class="back-to-catalog-bottom"><p>Посмотрите другие товары для фермы и хозяйства</p><a href="index.html#catalog">← Весь каталог</a></section>
 </main>

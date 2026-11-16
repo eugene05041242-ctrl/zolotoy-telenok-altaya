@@ -364,6 +364,41 @@ function injectInto(file, depth) {
   return false;
 }
 
+/* ──────────────────── справочник товара ────────────────────
+   Источник данных — data/reference/<id>.json (по файлу на товар).
+   Сборщик делает из каждого файла маленький .js, который страница товара
+   подключает отдельным тегом <script> только для открытого товара.
+   Так справочник работает и при открытии сайта с диска по file://,
+   где fetch() к локальному JSON браузер запрещает.
+   Поле "check" — служебное, на сайт не выводится. */
+
+function buildReference() {
+  const dir = join(ROOT, 'data/reference');
+  if (!existsSync(dir)) return [];
+  const built = [];
+  for (const file of readdirSync(dir).filter(f => f.endsWith('.json'))) {
+    const id = file.replace(/\.json$/, '');
+    const data = JSON.parse(read(`data/reference/${file}`));
+    delete data.check;
+    writeFileSync(
+      join(dir, `${id}.js`),
+      `/* Создаётся автоматически из ${file}. Не редактируйте этот файл — правьте JSON и запускайте node build.mjs */\n` +
+      `(window.__reference = window.__reference || {})[${JSON.stringify(id)}] = ${JSON.stringify(data, null, 1)};\n`,
+      'utf8'
+    );
+    built.push(id);
+  }
+  // Список товаров со справочником: страница товара сверяется с ним и не запрашивает
+  // несуществующий файл, иначе браузер показывал бы в консоли ошибку 404.
+  writeFileSync(
+    join(ROOT, 'data/reference-index.js'),
+    `/* Создаётся автоматически. Не редактируйте — запускайте node build.mjs */\n` +
+    `window.__referenceIndex = ${JSON.stringify(built.sort())};\n`,
+    'utf8'
+  );
+  return built;
+}
+
 /* ───────────────────────── sitemap и robots ───────────────────────── */
 
 function writeSitemap(urls) {
@@ -391,6 +426,9 @@ const pages = collectPages();
 for (const page of pages) if (page.draft) DRAFTS.add(page.url);
 for (const page of pages) writePage(page);
 console.log(`  страниц собрано: ${pages.length}`);
+
+const reference = buildReference();
+if (reference.length) console.log(`  справочник товаров: ${reference.length} файлов`);
 
 for (const [file, depth] of [['index.html', 0], ['product.html', 0]]) {
   if (injectInto(file, depth)) console.log(`  обновлены шапка и подвал: ${file}`);
